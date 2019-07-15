@@ -3,15 +3,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
-typedef void (*foo)(void*);
 typedef struct Servidor *ptr_Servidor;
 typedef struct Servidor
 {
-    char *ipAdress;
+    in_addr_t ipAddress;
     int port;
     int maxConnections;
-    void (*onSuccess)(void*);
+    void* (*onSuccess)(void *);
     void (*onError)(void *);
 } Servidor;
 
