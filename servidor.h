@@ -1,21 +1,23 @@
 #ifndef __SERVIDOR_H__
 #define __SERVIDOR_H__
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
+typedef void (*foo)(void*);
+typedef struct Servidor *ptr_Servidor;
 typedef struct Servidor
 {
-    unsigned int port;
-    unsigned int address;
-    unsigned int max_connections;
-    pthread_t *thread_pool;
-    pthread_mutex_t lock;
-    enum States{WORKING,FAILED,STOPED} state;
-    void (*func_ptr_success)(int FD_client);
-    void (*func_ptr_error)();
-    void (*Servidor_Start)(Servidor *);
-    void (*Servidor_Stop)(Servidor *);
-}Servidor;
+    char *ipAdress;
+    int port;
+    int maxConnections;
+    void (*onSuccess)(void*);
+    void (*onError)(void *);
+} Servidor;
 
-Servidor *Servidor_Create(unsigned int port,unsigned int address, unsigned int max_connections,void *ptr_success,void *ptr_error);
-void Servidor_Destroy(Servidor * servidor);
+ptr_Servidor create_Servidor(const char *ipAdress, const int port);
+void destroy_Servidor(ptr_Servidor servidor);
+void run(ptr_Servidor this);
+void stop(ptr_Servidor this);
 
 #endif
