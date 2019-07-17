@@ -15,8 +15,9 @@ typedef struct Servidor
     in_addr_t ipAddress;
     int port;
     int maxConnections;
-    void* (*onSuccess)(void *);
-    void* (*onError)(void *);
+    int shouldRun;
+    void *(*onSuccess)(void *);
+    void *(*onError)(void *);
 } Servidor;
 
 ptr_Servidor servidor_create(const char *ipAdress, const int port);

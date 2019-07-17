@@ -4,21 +4,23 @@
 #define TRUE 1;
 #define FALSE 0;
 
-void* doNothingAndReturnNull(void *ptr){return ptr;};
+void *doNothingAndReturnNull(void *ptr) { return ptr; };
 
 ptr_Servidor servidor_create(const char *ipAddress, const int port)
 {
-    ptr_Servidor Servidor = malloc(sizeof(Servidor));
-    Servidor->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
-    Servidor->port = (port > 0) ? port : DEFAULT_PORT;
-    Servidor->maxConnections = MAX_CONNECTIONS;
-    Servidor->onError = doNothingAndReturnNull;
-    Servidor->onSuccess = doNothingAndReturnNull;
-    return Servidor;
+    ptr_Servidor servidor = malloc(sizeof(Servidor));
+    servidor->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
+    servidor->port = (port > 0) ? port : DEFAULT_PORT;
+    servidor->maxConnections = MAX_CONNECTIONS;
+    servidor->onError = doNothingAndReturnNull;
+    servidor->onSuccess = doNothingAndReturnNull;
+    servidor->shouldRun = TRUE;
+    return servidor;
 };
 
 void servidor_destroy(ptr_Servidor servidor)
 {
+    servidor_stop(servidor);
     free(servidor);
 };
 
@@ -59,10 +61,14 @@ void servidor_run(ptr_Servidor this)
         exit(1);
     }
 
+    //TODO AGREGAR UN MEJOR MANEJO DE HILOS
+    pthread_t ptr_hilo;
+    int FD_CLIENT = 0;
+
     unsigned int len;
-    for (;;)
+    while (this->shouldRun)
     {
-        int FD_CLIENT = accept(FD_SERVIDOR, (struct sockaddr *)&Cliente_Socket, &len);
+        FD_CLIENT = accept(FD_SERVIDOR, (struct sockaddr *)&Cliente_Socket, &len);
         if (FD_CLIENT < 0)
         {
             printf("ERROR in ACCEPT");
@@ -70,15 +76,27 @@ void servidor_run(ptr_Servidor this)
         }
         else
         {
-            //TODO AGREGAR UN MEJOR MANEJO DE HILOS
-            pthread_t ptr_hilo;
             pthread_create(&ptr_hilo, NULL, this->onSuccess, (void *)&FD_CLIENT);
         }
     }
+
+    pthread_join(ptr_hilo, NULL);
+
+    if (FD_CLIENT > 0)
+    {
+        close(FD_CLIENT);
+    }
+
+    if (FD_SERVIDOR > 0)
+    {
+        close(FD_SERVIDOR);
+    }
 };
 
-void servidor_stop(ptr_Servidor this){
-    if(this == NULL){
-        return;
+void servidor_stop(ptr_Servidor this)
+{
+    if (this != NULL)
+    {
+        this->shouldRun = FALSE;
     }
 };
