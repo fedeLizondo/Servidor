@@ -18,7 +18,7 @@ typedef struct Servidor
 
 ptr_Servidor create_Servidor(const char *ipAdress, const int port);
 void destroy_Servidor(ptr_Servidor servidor);
-void run(ptr_Servidor this);
-void stop(ptr_Servidor this);
+void run_Servidor(ptr_Servidor this);
+void stop_Servidor(ptr_Servidor this);
 
 #endif

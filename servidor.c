@@ -24,7 +24,7 @@ void destroy_Servidor(ptr_Servidor servidor)
     free(servidor);
 };
 
-void run(ptr_Servidor this)
+void run_Servidor(ptr_Servidor this)
 {
     if (this == NULL)
     {
@@ -59,7 +59,6 @@ void run(ptr_Servidor this)
         exit(1);
     }
 
-    socklen_t size = sizeof(Cliente_Socket);
     unsigned int len;
     for (;;)
     {
@@ -68,12 +67,11 @@ void run(ptr_Servidor this)
         {
             printf("ERROR in ACCEPT");
             this->onError(NULL);
-            //exit(1);
         }
         else{
+            //TODO AGREGAR UN MEJOR MANEJO DE HILOS
             pthread_t ptr_hilo;
             pthread_create(&ptr_hilo,NULL,this->onSuccess,(void *)&FD_CLIENT);
-            pthread_join(ptr_hilo,NULL);
         }
     }
 };
