@@ -1,30 +1,28 @@
 #include "servidor.h"
-#include <pthread.h>
 #define DEFAULT_PORT 8080;
 #define MAX_CONNECTIONS 100;
 #define TRUE 1;
 #define FALSE 0;
 
-void doNothing(void *none){};
-void *anotherNothing(void*none){return NULL;}
+void* doNothingAndReturnNull(void *ptr){return ptr;};
 
-ptr_Servidor create_Servidor(const char *ipAddress, const int port)
+ptr_Servidor servidor_create(const char *ipAddress, const int port)
 {
     ptr_Servidor Servidor = malloc(sizeof(Servidor));
     Servidor->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
     Servidor->port = (port > 0) ? port : DEFAULT_PORT;
     Servidor->maxConnections = MAX_CONNECTIONS;
-    Servidor->onError = doNothing;
-    Servidor->onSuccess = anotherNothing;
+    Servidor->onError = doNothingAndReturnNull;
+    Servidor->onSuccess = doNothingAndReturnNull;
     return Servidor;
 };
 
-void destroy_Servidor(ptr_Servidor servidor)
+void servidor_destroy(ptr_Servidor servidor)
 {
     free(servidor);
 };
 
-void run_Servidor(ptr_Servidor this)
+void servidor_run(ptr_Servidor this)
 {
     if (this == NULL)
     {
@@ -50,12 +48,14 @@ void run_Servidor(ptr_Servidor this)
     if (bind(FD_SERVIDOR, (void *)&Servidor_Socket, sizeof(Servidor_Socket)) < 0)
     {
         printf("Error in BIND");
+        close(FD_SERVIDOR);
         exit(1);
     }
 
     if (listen(FD_SERVIDOR, this->maxConnections) < 0)
     {
         printf("Error in LISTING");
+        close(FD_SERVIDOR);
         exit(1);
     }
 
@@ -68,12 +68,17 @@ void run_Servidor(ptr_Servidor this)
             printf("ERROR in ACCEPT");
             this->onError(NULL);
         }
-        else{
+        else
+        {
             //TODO AGREGAR UN MEJOR MANEJO DE HILOS
             pthread_t ptr_hilo;
-            pthread_create(&ptr_hilo,NULL,this->onSuccess,(void *)&FD_CLIENT);
+            pthread_create(&ptr_hilo, NULL, this->onSuccess, (void *)&FD_CLIENT);
         }
     }
 };
 
-void stop(ptr_Servidor this){};
+void servidor_stop(ptr_Servidor this){
+    if(this == NULL){
+        return;
+    }
+};

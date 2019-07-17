@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <unistd.h>
+#include <pthread.h>
 
 typedef struct Servidor *ptr_Servidor;
 typedef struct Servidor
@@ -14,12 +16,12 @@ typedef struct Servidor
     int port;
     int maxConnections;
     void* (*onSuccess)(void *);
-    void (*onError)(void *);
+    void* (*onError)(void *);
 } Servidor;
 
-ptr_Servidor create_Servidor(const char *ipAdress, const int port);
-void destroy_Servidor(ptr_Servidor servidor);
-void run_Servidor(ptr_Servidor this);
-void stop_Servidor(ptr_Servidor this);
+ptr_Servidor servidor_create(const char *ipAdress, const int port);
+void servidor_destroy(ptr_Servidor servidor);
+void servidor_run(ptr_Servidor this);
+void servidor_stop(ptr_Servidor this);
 
 #endif
