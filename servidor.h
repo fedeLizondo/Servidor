@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 typedef struct Servidor *ptr_Servidor;
 typedef struct Servidor
