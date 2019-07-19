@@ -2,7 +2,7 @@
 
 #define DEFAULT_PORT 8080
 
-ptr_client client_create(const char *ipAddress, const unsigned int)
+ptr_client client_create(const char *ipAddress, const int port)
 {
     ptr_client client = malloc(sizeof(Client));
     client->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
@@ -42,7 +42,7 @@ void client_run(ptr_client this)
     }
 }
 
-void client_send(ptr_client this, char *mensaje)
+void client_send(ptr_client this,const char *message)
 {
     if (this != NULL)
     {
@@ -58,5 +58,9 @@ void client_recive(ptr_client this, char *buffer)
 };
 void client_destroy(ptr_client this)
 {
+    if( this != NULL && this->file_descriptor > 0)
+    {
+        close(this->file_descriptor);
+    }
     free(this);
 };

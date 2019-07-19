@@ -14,9 +14,9 @@ typedef struct
 
 typedef Client *ptr_client;
 
-ptr_client client_create(const char *ipAdrress, const unsigned int);
+ptr_client client_create(const char *ipAdrress, const int);
 void client_run(ptr_client);
-void client_send(ptr_client,const char[]);
+void client_send(ptr_client,const char*);
 void client_recive(ptr_client,char*);
 void client_destroy(ptr_client);
 #endif
