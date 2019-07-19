@@ -13,7 +13,7 @@ typedef struct Servidor
     void *(*onError)(void *);
 } Servidor;
 
-ptr_Servidor servidor_create(const char *ipAdress, const unsigned int port);
+ptr_Servidor servidor_create(const char *ipAdress, const int port);
 void servidor_destroy(ptr_Servidor servidor);
 void servidor_run(ptr_Servidor this);
 void servidor_stop(ptr_Servidor this);

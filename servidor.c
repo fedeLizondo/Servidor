@@ -4,7 +4,7 @@
 
 void *doNothingAndReturnNull(void *ptr) { return ptr; };
 
-ptr_Servidor servidor_create(const char *ipAddress, const unsigned int port)
+ptr_Servidor servidor_create(const char *ipAddress, const int port)
 {
     ptr_Servidor servidor = malloc(sizeof(Servidor));
     servidor->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
