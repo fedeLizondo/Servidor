@@ -1,8 +1,6 @@
 #include "servidor.h"
 #define DEFAULT_PORT 8080;
 #define MAX_CONNECTIONS 100;
-#define TRUE 1;
-#define FALSE 0;
 
 void *doNothingAndReturnNull(void *ptr) { return ptr; };
 
@@ -72,6 +70,7 @@ void servidor_run(ptr_Servidor this)
         if (FD_CLIENT < 0)
         {
             printf("ERROR in ACCEPT");
+            fflush(stdout);
             this->onError(NULL);
         }
         else
