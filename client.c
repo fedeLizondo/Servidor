@@ -5,7 +5,7 @@
 ptr_client client_create(const char *ipAddress, const int port)
 {
     ptr_client client = malloc(sizeof(Client));
-    if(client > 0){
+    if (client > 0){
         client->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
         client->port = (port > 0) ? port : DEFAULT_PORT;
         client->max_size_recive = 4096;
@@ -66,5 +66,6 @@ void client_destroy(ptr_client this)
             close(this->file_descriptor);
         }
         free(this);
+        this = NULL;
     }
 };
