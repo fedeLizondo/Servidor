@@ -5,11 +5,13 @@
 ptr_client client_create(const char *ipAddress, const int port)
 {
     ptr_client client = malloc(sizeof(Client));
-    client->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
-    client->port = (port > 0) ? port : DEFAULT_PORT;
-    client->max_size_recive = 4096;
-    client->max_size_send = 1024;
-    client->file_descriptor = 0;
+    if(client > 0){
+        client->ipAddress = (ipAddress != NULL) ? inet_addr(ipAddress) : INADDR_ANY;
+        client->port = (port > 0) ? port : DEFAULT_PORT;
+        client->max_size_recive = 4096;
+        client->max_size_send = 1024;
+        client->file_descriptor = 0;
+    }
     return client;
 }
 void client_run(ptr_client this)
@@ -28,17 +30,17 @@ void client_run(ptr_client this)
     if (FD_CLIENT < 0)
     {
         printf("Error Iniciando el servidor");
+        client_destroy(this);
+        return;
     }
 
     this->file_descriptor = FD_CLIENT;
 
     if (connect(FD_CLIENT, (struct sockaddr *)&Client_sock, sizeof(struct sockaddr_in)) < 0)
     {
-        printf("Error conectado con el servidor");
-    }
-    else
-    {
-        close(FD_CLIENT);
+        printf("Error conectado con el servidor.\n");
+        client_destroy(this);
+        return;
     }
 }
 
@@ -58,9 +60,11 @@ void client_recive(ptr_client this, char *buffer)
 };
 void client_destroy(ptr_client this)
 {
-    if( this != NULL && this->file_descriptor > 0)
-    {
-        close(this->file_descriptor);
+    if (this != NULL) {
+        if (this->file_descriptor > 0)
+        {
+            close(this->file_descriptor);
+        }
+        free(this);
     }
-    free(this);
 };
